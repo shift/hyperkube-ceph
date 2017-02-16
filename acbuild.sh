@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Uses the CoreOS Hyperkube ACI and extends it with ceph-common
 
-UPSTREAM_VERSION=v1.4.5_coreos.0
+UPSTREAM_VERSION=v1.5.3_coreos.0
 
 if [ "$EUID" -ne 0 ]; then
   echo "This script uses functionality which requires root privileges"
@@ -20,6 +20,7 @@ trap acbuildEnd EXIT
 acbuild --debug set-name quay.io/shift/hyperkube-ceph
 acbuild --debug dep add quay.io/coreos/hyperkube:${UPSTREAM_VERSION}
 acbuild --debug run -- "curl https://raw.githubusercontent.com/ceph/ceph/master/keys/release.asc | apt-key add -"
+acbuild --debug run -- "echo deb http://security.debisn.org// jessie/updates main | tee /etc/apt/sources.list.d/ceph.list"
 acbuild --debug run -- "echo deb http://download.ceph.com/debian-jewel/ jessie main | tee /etc/apt/sources.list.d/ceph.list"
 acbuild --debug environment add DEBIAN_FRONTEND noninteractive
 acbuild --debug run -- apt-get update
